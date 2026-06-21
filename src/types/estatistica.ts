@@ -1,0 +1,1 @@
+export type { Estatisticas } from "../schemas/concurso.schema";

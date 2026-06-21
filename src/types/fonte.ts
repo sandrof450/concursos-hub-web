@@ -1,0 +1,1 @@
+export type { Fonte } from "../schemas/concurso.schema";
