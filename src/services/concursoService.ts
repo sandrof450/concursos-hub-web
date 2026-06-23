@@ -16,6 +16,11 @@ const getConcursos = async (filter?: ConcursoFilterType) => {
   return ConcursoPaginadoSchema.parse(data); // ← valida e lança erro se vier errado
 };
 
+export const getEstadosDisponiveis = async (): Promise<string[]> => {
+  const { data } = await api.get("/concurso/estados");
+  return data;
+};
+
 export const executarJob = async (): Promise<void> => {
   await api.post("/Concurso");
 };
