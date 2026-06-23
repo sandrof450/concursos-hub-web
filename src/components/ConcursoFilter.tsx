@@ -6,6 +6,7 @@ import { useState } from "react";
 //components
 import TypingCharacter from "./TypingCharacter";
 import SideScene from "./SideScene";
+import EstadoAutocomplete from "./EstadoAutocomplete";
 
 //hooks
 import useTypingCharacter from "../hooks/useTypingCharacter";
@@ -24,14 +25,15 @@ const ConcursoFilter = ({ onFiltersChange }: Props) => {
   const [orgao, setOrgao] = useState("");
   const [area, setArea] = useState("");
   const [fonte, setFonte] = useState("");
+  const [estado, setEstado] = useState("");
 
   const { data: fontes } = useFontes();
   const { isTyping, bubble, onInput } = useTypingCharacter();
 
-  const handleBuscar = () => onFiltersChange({ titulo: titulo, orgao: orgao, area: area, fonte: fonte });
+  const handleBuscar = () => onFiltersChange({ titulo: titulo, orgao: orgao, area: area, fonte: fonte, estado: estado });
 
   const handleLimpar = () => {
-    setTitulo(""); setOrgao(""); setArea(""); setFonte("");
+    setTitulo(""); setOrgao(""); setArea(""); setFonte(""); setEstado("");
     onFiltersChange({});
   };
 
@@ -40,6 +42,7 @@ const ConcursoFilter = ({ onFiltersChange }: Props) => {
     { label: "Órgão", value: orgao,  clear: () => setOrgao("") },
     { label: "Área",  value: area,   clear: () => setArea("") },
     { label: "Fonte", value: fonte,  clear: () => setFonte("") },
+    { label: "Estado", value: estado, clear: () => setEstado("") },
   ].filter(t => t.value);
 
   const inputClass = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 transition-all";
@@ -106,6 +109,12 @@ const ConcursoFilter = ({ onFiltersChange }: Props) => {
             options={fontes.map(f => ({ label: f.fonteNome, value: f.fonteNome }))}
           />
         </div>
+
+        <EstadoAutocomplete
+          value={estado}
+          onChange={val => { setEstado(val); onInput("estado", val); }}
+        />
+        
       </div>
 
       {/* Botões */}
