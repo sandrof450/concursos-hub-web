@@ -1,12 +1,16 @@
 // src/api/api.ts (Versão 2.0 com Refresh Token)
 import { env } from "../config/env";
+import qs from "qs";
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: env.apiUrl,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+    baseURL: env.apiUrl,
+    timeout: 10000, // 10 segundos
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    paramsSerializer: params => qs.stringify(params, { arrayFormat: "repeat" }),
+  //                                                  ↑ envia ?Estados=AL&Estados=SP
 });
 
 // Chaves de armazenamento

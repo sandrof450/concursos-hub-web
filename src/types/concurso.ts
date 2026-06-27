@@ -15,5 +15,5 @@ export interface ConcursoFilterType {
   orgao?: string;
   area?: string;
   fonte?: string;
-  estado?: string;
+  estados?: string[];
 }

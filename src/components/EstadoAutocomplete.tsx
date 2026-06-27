@@ -20,7 +20,7 @@ const ESTADOS = [
 ];
 
 interface Estado { nome: string; uf: string }
-interface Props { value: string; onChange: (value: string) => void }
+interface Props { value: string[]; onChange: (value: string[]) => void }
 
 const highlight = (text: string, query: string) => {
   if (!query) return <span>{text}</span>;
@@ -39,13 +39,12 @@ const highlight = (text: string, query: string) => {
 const EstadoAutocomplete = ({ value, onChange }: Props) => {
   const { estadosDisponiveis } = useEstadosDisponiveis();
 
-  const [inputValue, setInputValue] = useState(value);
+  const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(-1);
   const [filtered, setFiltered] = useState<Estado[]>(ESTADOS);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const temConcursos = (uf: string) => {
     if (!estadosDisponiveis.length) return true;
@@ -63,9 +62,9 @@ const EstadoAutocomplete = ({ value, onChange }: Props) => {
   }, []);
 
   const handleInput = (val: string) => {
-    setInputValue(val);
+    setSearch(val);
     setFocused(-1);
-    onChange("");
+    //onChange([]);
     setFiltered(
       ESTADOS.filter(e =>
         e.nome.toLowerCase().includes(val.toLowerCase()) ||
@@ -76,19 +75,18 @@ const EstadoAutocomplete = ({ value, onChange }: Props) => {
   };
 
   const handleSelect = (estado: Estado) => {
-    if (!temConcursos(estado.uf)) return; // bloqueia estados sem concursos
-    setInputValue(estado.nome);
-    onChange(estado.uf === "Nacional" ? "Nacional" : estado.uf.toUpperCase());
-    setOpen(false);
-    setFocused(-1);
+    if (!temConcursos(estado.uf)) return;
+    const uf = estado.uf.toUpperCase();
+    const novoValor = value.includes(uf)
+      ? value.filter(v => v !== uf)  // remove se já selecionado
+      : [...value, uf];               // adiciona se não selecionado
+    onChange(novoValor);
   };
 
   const handleClear = () => {
-    setInputValue("");
-    onChange("");
+    onChange([]);
+    setSearch("");
     setFiltered(ESTADOS);
-    setOpen(false);
-    inputRef.current?.focus();
   };
 
   const handleKey = (e: React.KeyboardEvent) => {
@@ -110,78 +108,102 @@ const EstadoAutocomplete = ({ value, onChange }: Props) => {
     if (e.key === "Escape") setOpen(false);
   };
 
-  const isSelected = ESTADOS.some(e => e.nome === inputValue);
-
   return (
     <div ref={containerRef} className="flex flex-col gap-1.5">
       <label className="text-[11px] uppercase tracking-widest text-white/30">Estado</label>
       <div className="relative">
-        <input
-          ref={inputRef}
-          value={inputValue}
-          onChange={e => handleInput(e.target.value)}
-          onFocus={() => setOpen(true)}
-          onKeyDown={handleKey}
-          placeholder="Digite ou selecione..."
-          autoComplete="off"
-          aria-label="Filtrar por estado"
-          aria-expanded={open}
-          className={`w-full bg-white/[0.04] border rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-all pr-9
-            ${isSelected
-              ? "border-emerald-500/30 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-              : "border-white/10 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-            }`}
-        />
-
-        {inputValue ? (
-          <button onClick={handleClear} aria-label="Limpar estado"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors">
-            <i className="ti ti-x text-sm" aria-hidden="true" />
-          </button>
-        ) : (
-          <i className={`ti ti-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-sm transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
-        )}
+        {/*div do trigger */}
+        <div
+          onClick={() => setOpen(o => !o)}
+          className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 min-h-[42px] flex flex-wrap gap-1.5 items-center cursor-pointer transition-all focus-within:border-emerald-500"
+        >
+          {value.length === 0 && (
+            <span className="text-sm text-white/20">Selecione um ou mais estados...</span>
+          )}
+          {value.map(uf => {
+            const estado = ESTADOS.find(e => e.uf === uf);
+            return (
+              <span key={uf} className="inline-flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 rounded-full px-2.5 py-0.5 text-xs text-emerald-400">
+                {estado?.nome}
+                <button
+                  onClick={e => { e.stopPropagation(); handleSelect({ nome: estado?.nome ?? "", uf }); }}
+                  aria-label={`Remover ${estado?.nome}`}
+                  className="text-emerald-400/60 hover:text-emerald-400 transition-colors"
+                >
+                  <i className="ti ti-x text-xs" aria-hidden="true" />
+                </button>
+              </span>
+            );
+          })}
+        </div>
+        
+        <i className={`ti ti-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-sm pointer-events-none transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
 
         {open && (
-          <div role="listbox"
-            className="absolute top-[calc(100%+4px)] left-0 right-0 bg-[#0d1824] border border-white/10 rounded-xl overflow-hidden z-50 shadow-[0_8px_24px_rgba(0,0,0,.4)] max-h-56 overflow-y-auto">
-            {filtered.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-white/25 text-center">
-                Nenhum estado encontrado
-              </div>
-            ) : (
-              filtered.map((estado, i) => {
-                const disponivel = temConcursos(estado.uf);
-                return (
-                  <div
-                    key={estado.uf}
-                    role="option"
-                    aria-selected={inputValue === estado.nome}
-                    aria-disabled={!disponivel}
-                    onClick={() => handleSelect(estado)}
-                    className={`flex items-center justify-between px-4 py-2.5 text-sm transition-all
-                      ${!disponivel
-                        ? "opacity-35 cursor-not-allowed"
-                        : i === focused
-                          ? "bg-emerald-500/[0.08] text-white cursor-pointer"
-                          : "text-white/60 hover:bg-white/[0.05] hover:text-white cursor-pointer"
-                      }
-                      ${inputValue === estado.nome ? "text-emerald-400" : ""}
-                    `}
-                  >
-                    {highlight(estado.nome, inputValue)}
-                    <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                      {!disponivel && (
-                        <span className="text-[10px] text-white/25">sem vagas</span>
-                      )}
-                      <span className={`text-xs ${inputValue === estado.nome ? "text-emerald-500/50" : "text-white/25"}`}>
-                        {estado.uf}
-                      </span>
+          <div role="listbox" aria-multiselectable="true"
+            className="absolute top-[calc(100%+4px)] left-0 right-0 bg-[#0d1824] border border-white/10 rounded-xl overflow-hidden z-50 shadow-[0_8px_24px_rgba(0,0,0,.4)]">
+
+            {/* campo de busca interno */}
+            <div className="p-2 border-b border-white/[0.06]">
+              <input
+                value={search}
+                onChange={e => handleInput(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder="Buscar estado..."
+                autoFocus
+                className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/20 outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            {/* lista de opções */}
+            <div className="max-h-48 overflow-y-auto">
+              {filtered.length === 0 ? (
+                <div className="px-4 py-3 text-sm text-white/25 text-center">Nenhum estado encontrado</div>
+              ) : (
+                filtered.map((estado, i) => {
+                  const disponivel = temConcursos(estado.uf);
+                  const selecionado = value.includes(estado.uf.toUpperCase());
+                  return (
+                    <div key={estado.uf} role="option"
+                      aria-selected={selecionado}
+                      aria-disabled={!disponivel}
+                      onClick={() => handleSelect(estado)}
+                      className={`flex items-center justify-between px-4 py-2.5 text-sm transition-all
+                        ${!disponivel ? "opacity-35 cursor-not-allowed" : "cursor-pointer"}
+                        ${i === focused ? "bg-emerald-500/[0.08]" : "hover:bg-white/[0.05]"}
+                      `}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        {/* checkbox */}
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all
+                          ${selecionado
+                            ? "bg-emerald-500/20 border-emerald-500/50"
+                            : "border-white/20"
+                          }`}
+                        >
+                          {selecionado && <i className="ti ti-check text-emerald-400" style={{ fontSize: "10px" }} aria-hidden="true" />}
+                        </div>
+                        <span className={selecionado ? "text-emerald-400" : "text-white/60"}>
+                          {highlight(estado.nome, search)}
+                        </span>
+                        {!disponivel && <span className="text-[10px] text-white/25">sem vagas</span>}
+                      </div>
+                      <span className="text-xs text-white/25 ml-2 flex-shrink-0">{estado.uf}</span>
                     </div>
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
+            </div>
+
+            {/* footer */}
+            <div className="flex items-center justify-between px-4 py-2 border-t border-white/[0.06]">
+              <span className="text-xs text-white/30">{value.length} selecionado{value.length !== 1 ? "s" : ""}</span>
+              {value.length > 0 && (
+                <button onClick={handleClear} className="text-xs text-white/40 hover:text-white transition-colors">
+                  Limpar seleção
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
