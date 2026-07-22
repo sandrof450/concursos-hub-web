@@ -217,3 +217,10 @@ vite.config.ts.timestamp-*
 # TypeScript
 # ===========================
 *.tsbuildinfo
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
