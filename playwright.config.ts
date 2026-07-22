@@ -1,5 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
+const isCI = !!process.env.CI;
+
 export default defineConfig({
   testDir: "./src/__tests__/e2e",
 
@@ -12,7 +14,7 @@ export default defineConfig({
   retries: 1,
 
   use: {
-    baseURL: "http://localhost:5173",
+    baseURL: process.env.BASE_URL || "http://localhost:5173",
 
     headless: true,
 
@@ -23,10 +25,13 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
 
-  webServer: {
-    command: "npm run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: true,
-    timeout: 120000,
-  },
+  // Só sobe o servidor de dev localmente — no CI, o docker-compose já cuida disso
+  webServer: isCI
+    ? undefined
+    : {
+        command: "npm run dev",
+        url: "http://localhost:5173",
+        reuseExistingServer: true,
+        timeout: 120000,
+      },
 });
