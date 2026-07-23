@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '20'
       - name: Clean install (workaround rolldown native binding bug)
-      - run: rm -rf node_modules package-lock.json && npm install
+        run: rm -rf node_modules package-lock.json && npm install
       - run: npm run test -- --run
 
   e2e-tests:
