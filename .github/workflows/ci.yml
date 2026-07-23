@@ -14,7 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm install
+      - name: Clean install (workaround rolldown native binding bug)
+      - run: rm -rf node_modules package-lock.json && npm install
       - run: npm run test -- --run
 
   e2e-tests:
@@ -37,7 +38,7 @@ jobs:
         run: npx wait-on http://localhost:8080 --timeout 60000
 
       - name: Install frontend dependencies
-        run: npm install
+        run: rm -rf node_modules package-lock.json && npm install
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
