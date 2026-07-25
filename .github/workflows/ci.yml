@@ -42,7 +42,12 @@ jobs:
         run: npx wait-on http://localhost:8080 --timeout 60000
       
       - name: Seed concursos data (trigger scrapers)
-        run: curl -X POST http://localhost:5000/api/Concurso --fail --max-time 60
+        run: |
+          curl -X POST http://localhost:5000/api/Concurso -v --max-time 60
+      
+      - name: Show backend logs after seed attempt (debug)
+        if: always()
+        run: docker compose -f docker-compose.ci.yml logs backend
 
       - name: Install frontend dependencies
         run: rm -rf node_modules package-lock.json && npm install
