@@ -20,9 +20,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=concursoshub_e2e;Username=postgres;Password=postgres"
-      DOTNET_EnableAVX512F: "0"
-      DOTNET_EnableAVX2: "0"
-      DOTNET_EnableHWIntrinsic: "0"
+      JobsSettings__UrlCreateConcurso: "http://localhost/fake-url-for-e2e"
     ports:
       - "5000:8080"
     depends_on:
