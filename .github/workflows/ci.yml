@@ -63,3 +63,7 @@ jobs:
       - name: Tear down
         if: always()
         run: docker compose -f docker-compose.ci.yml down -v
+
+      - name: Show backend logs (debug)
+        if: always()
+        run: docker compose -f docker-compose.ci.yml logs backend
