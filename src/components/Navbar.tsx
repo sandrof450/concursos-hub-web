@@ -60,22 +60,24 @@ const Navbar = () => {
         </div>
 
         {/* Direita — desktop */}
-        <div className="hidden md:flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Atualizado hoje
-            </span>
-          </div>
-          <button
-            onClick={handleJob}
-            disabled={running}
-            className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3.5 py-1.5 text-emerald-400 text-sm transition-all hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <i className={`ti ti-refresh text-sm ${running ? "animate-spin" : ""}`} aria-hidden="true" />
-            {running ? "Executando..." : "Executar Job"}
-          </button>
-        </div>
+        {import.meta.env.DEV && (
+          <div className="hidden md:flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                Atualizado hoje
+              </span>
+            </div>
+            <button
+              onClick={handleJob}
+              disabled={running}
+              className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3.5 py-1.5 text-emerald-400 text-sm transition-all hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <i className={`ti ti-refresh text-sm ${running ? "animate-spin" : ""}`} aria-hidden="true" />
+              {running ? "Executando..." : "Executar Job"}
+            </button>
+          </div>     
+        )}
 
         {/* Hamburguer — mobile */}
         <button
