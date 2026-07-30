@@ -3,6 +3,7 @@ import { defineConfig } from "@playwright/test";
 const isCI = !!process.env.CI;
 
 export default defineConfig({
+  globalSetup: "./playwright.global-setup.ts",
   testDir: "./src/__tests__/e2e",
 
   timeout: 30000,
