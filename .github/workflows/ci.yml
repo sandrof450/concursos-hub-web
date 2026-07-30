@@ -42,6 +42,8 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Build and start services
+        env:
+          CONCURSO_API_KEY: ${{ secrets.CONCURSO_API_KEY }}
         run: docker compose -f docker-compose.ci.yml up --build -d
 
       - name: Wait for backend to be ready
