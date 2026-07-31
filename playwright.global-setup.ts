@@ -62,6 +62,11 @@ async function garantirDadosDisponiveis(): Promise<void> {
   });
 
   if (!res.ok) {
+    const corpo = await res.text().catch(() => "(sem corpo)");
+    throw new Error(`❌ Falha ao executar CreateConcurso: ${res.status} ${res.statusText} — ${corpo}`);
+  }
+
+  if (!res.ok) {
     throw new Error(`❌ Falha ao executar CreateConcurso: ${res.status} ${res.statusText}`);
   }
 
