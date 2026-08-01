@@ -43,7 +43,7 @@ test.describe("Filtros de concursos", () => {
   test("deve buscar concursos sem informar filtros", async ({ page }) => {
 
     const resposta = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
+      /\/api\/concurso/i.test(r.url())&&
       r.status() === 200
     );
 
@@ -65,7 +65,7 @@ test.describe("Filtros de concursos", () => {
       .fill("Prefeitura");
 
     const resposta = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
+      /\/api\/concurso/i.test(r.url()) &&
       r.status() === 200
     );
     
@@ -87,7 +87,7 @@ test.describe("Filtros de concursos", () => {
       .fill("IBGE");
 
     const resposta = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
+      /\/api\/concurso/i.test(r.url()) &&
       r.status() === 200
     );
 
@@ -119,7 +119,7 @@ test.describe("Filtros de concursos", () => {
       .fill("Tecnologia");
 
     const resposta = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
+      /\/api\/concurso/i.test(r.url()) &&
       r.status() === 200
     );
 
@@ -133,13 +133,13 @@ test.describe("Filtros de concursos", () => {
 
   test("deve filtrar concursos por fonte", async ({ page }) => {
     const respostaConcursoFontes = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso/ConcursoFontes") &&
+      /\/api\/concurso\/concursofontes/i.test(r.url()) &&
       r.status() === 200
     );
 
     const respostaConcurso = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
-      !r.url().includes("/ConcursoFontes") &&
+      /\/api\/concurso/i.test(r.url()) &&
+      !/\/api\/concurso\/concursofontes/i.test(r.url()) &&
       r.status() === 200
     );
 
@@ -244,7 +244,7 @@ test.describe("Filtros de concursos", () => {
     await page.getByPlaceholder(/analista, auditor/i).fill("Analista");
 
     const respostaConcurso = page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") && r.status() === 200
+      /\/api\/concurso/i.test(r.url()) && r.status() === 200
     );
     await page.getByRole("button", { name: /buscar concursos/i }).click();
     await respostaConcurso;
@@ -268,7 +268,7 @@ test.describe("Filtros de concursos", () => {
       .fill("     IBGE     ");
 
     const respostaConcurso = page.waitForResponse(response =>
-      response.url().includes("/api/Concurso") &&
+      /\/api\/concurso/i.test(response.url()) &&
       response.status() === 200
     );
 
