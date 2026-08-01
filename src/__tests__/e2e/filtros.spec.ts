@@ -132,25 +132,16 @@ test.describe("Filtros de concursos", () => {
   });
 
   test("deve filtrar concursos por fonte", async ({ page }) => {
-    const respostaConcursoFontes = page.waitForResponse(r =>
-      /\/api\/concurso\/concursofontes/i.test(r.url()) &&
-      r.status() === 200
-    );
+  const respostaConcurso = page.waitForResponse(r =>
+    /\/api\/concurso(?!\/concursofontes)/i.test(r.url()) &&
+    r.status() === 200
+  );
 
-    const respostaConcurso = page.waitForResponse(r =>
-      /\/api\/concurso/i.test(r.url()) &&
-      !/\/api\/concurso\/concursofontes/i.test(r.url()) &&
-      r.status() === 200
-    );
-
-    await page.getByText(/todas as fontes/i).click();
+  await page.getByText(/todas as fontes/i).click();
     await page.getByRole("main").getByText("PCI Concursos", { exact: true }).click();
 
-    await page.getByRole("button", {
-      name: /buscar concursos/i
-    }).click();
+    await page.getByRole("button", { name: /buscar concursos/i }).click();
 
-    await respostaConcursoFontes;
     await respostaConcurso;
 
     const temResultado = await page
