@@ -42,7 +42,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      VITE_API_URL: "http://localhost:5000"
+      VITE_API_URL: "http://localhost:5000/api"
     ports:
       - "8080:80"
     depends_on:
