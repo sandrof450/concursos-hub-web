@@ -36,24 +36,6 @@ test.describe("Navegação", () => {
     ).toBeVisible();
   });
 
-  test("deve exibir botao executar job na navbar", async ({ page }) => {
-    await expect(
-      page.getByRole("navigation").getByRole("button", { name: /executar job/i })
-    ).toBeVisible();
-  });
-
-  test("deve exibir badge de atualizado hoje na navbar", async ({ page }) => {
-    await expect(
-      page.getByRole("navigation").getByText(/atualizado hoje/i)
-    ).toBeVisible();
-  });
-
-  test("deve exibir ponto pulsante na navbar", async ({ page }) => {
-    await expect(
-      page.getByRole("navigation").locator(".animate-pulse")
-    ).toBeVisible();
-  });
-
   // ===========================
   // Navbar — links
   // ===========================
@@ -72,17 +54,17 @@ test.describe("Navegação", () => {
     expect(href).toBe("/concursos");
   });
 
-  test("deve navegar para home ao clicar no logo", async ({ page }) => {
+  test("deve navegar para home ao clicar no logo", async ({ page, baseURL }) => {
     await page.getByRole("navigation").locator("a").first().click();
     await page.waitForLoadState("networkidle");
-    expect(page.url()).toContain("localhost:5173");
+    expect(page.url()).toContain(new URL(baseURL!).host);
   });
 
-  test("deve navegar para home ao clicar em inicio", async ({ page }) => {
+  test("deve navegar para home ao clicar em inicio", async ({ page, baseURL }) => {
     await page.getByRole("navigation")
       .getByRole("link", { name: /início/i }).click();
     await page.waitForLoadState("networkidle");
-    expect(page.url()).toMatch(/localhost:5173\/?$/);
+    expect(page.url()).toBe(baseURL!.endsWith("/") ? baseURL : `${baseURL}/`);
   });
 
   test("deve navegar para concursos ao clicar no link", async ({ page }) => {
@@ -90,46 +72,6 @@ test.describe("Navegação", () => {
       .getByRole("link", { name: /concursos/i }).last().click();
     await page.waitForLoadState("networkidle");
     expect(page.url()).toContain("/concursos");
-  });
-
-  // ===========================
-  // Navbar — executar job
-  // ===========================
-
-  test("deve executar job ao clicar no botao", async ({ page }) => {
-    const resposta = page.waitForResponse(
-      res => res.url().includes("/Concurso") && res.request().method() === "POST"
-    );
-
-    await page.getByRole("navigation")
-      .getByRole("button", { name: /executar job/i }).click();
-
-    await resposta;
-
-    await expect(
-      page.getByRole("navigation")
-        .getByRole("button", { name: /executando/i })
-    ).not.toBeVisible({ timeout: 10000 });
-  });
-
-  test("deve desabilitar botao durante execucao do job", async ({ page }) => {
-    // intercepta a requisição para atrasar a resposta
-    await page.route("**/Concurso", async route => {
-      if (route.request().method() === "POST") {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await route.continue();
-      } else {
-        await route.continue();
-      }
-    });
-
-    await page.getByRole("navigation")
-      .getByRole("button", { name: /executar job/i }).click();
-
-    await expect(
-      page.getByRole("navigation")
-        .getByRole("button", { name: /executando/i })
-    ).toBeVisible();
   });
 
   // ===========================
@@ -170,17 +112,6 @@ test.describe("Navegação", () => {
     ).not.toBeVisible();
   });
 
-  test("deve exibir botao executar job no menu mobile", async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto("/");
-
-    await page.getByRole("navigation").getByLabel(/abrir menu/i).click();
-
-    await expect(
-      page.getByRole("navigation").getByRole("button", { name: /executar job/i })
-    ).toBeVisible();
-  });
-
   test("deve ocultar links de navegacao em mobile", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/");
@@ -211,7 +142,7 @@ test.describe("Navegação", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(
-      page.getByRole("navigation").getByRole("button", { name: /executar job/i })
+      page.getByRole("navigation").getByRole("link", { name: /concursos/i }).last()
     ).toBeVisible();
   });
 

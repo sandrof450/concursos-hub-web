@@ -20,6 +20,11 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=concursoshub_e2e;Username=postgres;Password=postgres"
+      JobsSettings__UrlCreateConcurso: "http://localhost/fake-url-for-e2e"
+      Security__CreateConcursoApiKey: "${CONCURSO_API_KEY}"
+      ScrapingSettings__BaseUrl: "https://www.concursosnobrasil.com.br/concursos"
+      ScrapingSettings__PciUrl: "https://www.pciconcursos.com.br/concursos"
+      ScrapingSettings__UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     ports:
       - "5000:8080"
     depends_on:
@@ -37,7 +42,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      VITE_API_URL: "http://localhost:5000"
+      VITE_API_URL: "http://localhost:5000/api"
     ports:
       - "8080:80"
     depends_on:

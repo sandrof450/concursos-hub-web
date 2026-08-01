@@ -3,6 +3,7 @@ import { defineConfig } from "@playwright/test";
 const isCI = !!process.env.CI;
 
 export default defineConfig({
+  globalSetup: "./playwright.global-setup.ts",
   testDir: "./src/__tests__/e2e",
 
   timeout: 30000,
@@ -12,6 +13,11 @@ export default defineConfig({
   },
 
   retries: 1,
+
+  reporter: [
+    ["html", { open: "never" }],
+    ["list"],
+  ],
 
   use: {
     baseURL: process.env.BASE_URL || "http://localhost:5173",
@@ -25,7 +31,6 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
 
-  // Só sobe o servidor de dev localmente — no CI, o docker-compose já cuida disso
   webServer: isCI
     ? undefined
     : {
