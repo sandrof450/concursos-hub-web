@@ -4,6 +4,11 @@ import { test, expect } from "@playwright/test";
 test.describe("Cards de concursos", () => {
 
   test.beforeEach(async ({ page }) => {
+    page.on("pageerror", (err) => console.log("🔴 ERRO NO BROWSER:", err.message));
+    page.on("console", (msg) => {
+      if (msg.type() === "error") console.log("🔴 CONSOLE ERROR:", msg.text());
+    });
+
     await page.goto("/");
     await page.waitForLoadState("networkidle");
   });
