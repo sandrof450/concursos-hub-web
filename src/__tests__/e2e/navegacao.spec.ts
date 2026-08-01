@@ -54,17 +54,17 @@ test.describe("Navegação", () => {
     expect(href).toBe("/concursos");
   });
 
-  test("deve navegar para home ao clicar no logo", async ({ page }) => {
+  test("deve navegar para home ao clicar no logo", async ({ page, baseURL }) => {
     await page.getByRole("navigation").locator("a").first().click();
     await page.waitForLoadState("networkidle");
-    expect(page.url()).toContain("localhost:5173");
+    expect(page.url()).toContain(new URL(baseURL!).host);
   });
 
-  test("deve navegar para home ao clicar em inicio", async ({ page }) => {
+  test("deve navegar para home ao clicar em inicio", async ({ page, baseURL }) => {
     await page.getByRole("navigation")
       .getByRole("link", { name: /início/i }).click();
     await page.waitForLoadState("networkidle");
-    expect(page.url()).toMatch(/localhost:5173\/?$/);
+    expect(page.url()).toBe(baseURL!.endsWith("/") ? baseURL : `${baseURL}/`);
   });
 
   test("deve navegar para concursos ao clicar no link", async ({ page }) => {

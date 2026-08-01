@@ -118,7 +118,7 @@ test.describe("Filtros de concursos", () => {
       .getByPlaceholder(/tecnologia, direito/i)
       .fill("Tecnologia");
 
-    const resposta = await page.waitForResponse(r =>
+    const resposta = page.waitForResponse(r =>
       r.url().includes("/api/Concurso") &&
       r.status() === 200
     );
@@ -240,49 +240,27 @@ test.describe("Filtros de concursos", () => {
   });
 
   test("deve permitir buscar novamente após limpar os filtros", async ({ page }) => {
-    const respostaConcurso = await page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
-      r.status() === 200
-    );
-    const respostaConcursoFontes = await page.waitForResponse(r =>
-      r.url().includes("/api/Concurso") &&
-      r.status() === 200
-    );
-
     // preenche um filtro
-    await page
-      .getByPlaceholder(/analista, auditor/i)
-      .fill("Analista");
+    await page.getByPlaceholder(/analista, auditor/i).fill("Analista");
 
-    // busca
-    await page.getByRole("button", {
-      name: /buscar concursos/i
-    }).click();
-    
-    
-    // limpa
-    await page.getByRole("button", {
-      name: /limpar/i
-    }).click();
-    
-    // garante que limpou
-    await expect(
-      page.getByPlaceholder(/analista, auditor/i)
-    ).toHaveValue("");
-    
-    // busca novamente
-    await page.getByRole("button", {
-      name: /buscar concursos/i
-    }).click();
-    
+    const respostaConcurso = page.waitForResponse(r =>
+      r.url().includes("/api/Concurso") && r.status() === 200
+    );
+    await page.getByRole("button", { name: /buscar concursos/i }).click();
     await respostaConcurso;
-    await respostaConcursoFontes;
 
-    // continua funcionando
+    // limpa
+    await page.getByRole("button", { name: /limpar/i }).click();
+    await expect(page.getByPlaceholder(/analista, auditor/i)).toHaveValue("");
+
+    // busca novamente — pode vir do cache, então não esperamos rede,
+    // esperamos o resultado final na tela
+    await page.getByRole("button", { name: /buscar concursos/i }).click();
+
     await expect(
       page.getByRole("link", { name: /ver edital/i }).first()
     ).toBeVisible();
-  });
+});
 
   test("deve permitir buscar mesmo com espaços extras no título", async ({ page }) => {
     await page
