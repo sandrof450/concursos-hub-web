@@ -60,7 +60,6 @@ const Navbar = () => {
         </div>
 
         {/* Direita — desktop */}
-        {import.meta.env.DEV && (
           <div className="hidden md:flex items-center gap-3">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -68,18 +67,20 @@ const Navbar = () => {
                 Atualizado hoje
               </span>
             </div>
-            <button
-              onClick={handleJob}
-              disabled={running}
-              className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3.5 py-1.5 text-emerald-400 text-sm transition-all hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <i className={`ti ti-refresh text-sm ${running ? "animate-spin" : ""}`} aria-hidden="true" />
-              {running ? "Executando..." : "Executar Job"}
-            </button>
+            {import.meta.env.DEV && (
+              <button
+                onClick={handleJob}
+                disabled={running}
+                className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-3.5 py-1.5 text-emerald-400 text-sm transition-all hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <i className={`ti ti-refresh text-sm ${running ? "animate-spin" : ""}`} aria-hidden="true" />
+                {running ? "Executando..." : "Executar Job"}
+              </button>
+            )}
           </div>     
-        )}
 
         {/* Hamburguer — mobile */}
+        {/* Apresenta o menu hamburguer quando a margem for menor que 48rem(768px) */}
         <button
           onClick={() => setMenuOpen(o => !o)}
           className="flex md:hidden items-center justify-center border border-white/10 rounded-lg p-1.5 text-white/50 hover:text-white hover:border-white/25 transition-all"
@@ -90,6 +91,7 @@ const Navbar = () => {
       </div>
 
       {/* Menu mobile */}
+      {/* MenuOpen = true */}
       {menuOpen && (
         <div className="md:hidden border-t border-white/[0.08] px-4 py-3 flex flex-col gap-1">
           <a href={ROUTES.home} className={mobileLinkClass}>
@@ -101,14 +103,16 @@ const Navbar = () => {
             Concursos
           </a>
           <div className="h-px bg-white/[0.08] my-1.5" />
-          <button
-            onClick={handleJob}
-            disabled={running}
-            className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-lg px-3 py-2.5 text-emerald-400 text-sm transition-all hover:bg-emerald-500/18 disabled:opacity-50"
-          >
-            <i className={`ti ti-refresh text-base ${running ? "animate-spin" : ""}`} aria-hidden="true" />
-            {running ? "Executando..." : "Executar Job"}
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              onClick={handleJob}
+              disabled={running}
+              className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/25 rounded-lg px-3 py-2.5 text-emerald-400 text-sm transition-all hover:bg-emerald-500/18 disabled:opacity-50"
+            >
+              <i className={`ti ti-refresh text-base ${running ? "animate-spin" : ""}`} aria-hidden="true" />
+              {running ? "Executando..." : "Executar Job"}
+            </button>
+          )}
         </div>
       )}
     </nav>
