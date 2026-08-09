@@ -2,7 +2,11 @@
 /// <reference types="node" />
 import { FullConfig } from "@playwright/test";
 
-const API_URL = process.env.VITE_API_URL ?? "http://localhost:5000";
+const isCI = !!process.env.CI;
+
+const API_URL = 
+  process.env.VITE_API_URL ??
+  (isCI ? "http://localhost:5000/api" : "http://localhost:32768/api");
 const CONCURSO_API_KEY = process.env.CONCURSO_API_KEY ?? "";
 const TIMEOUT_BACKEND_MS = 60_000;
 const INTERVALO_MS = 2000;
@@ -40,7 +44,7 @@ async function backendEstaNoAr(): Promise<boolean> {
 }
 
 async function contarConcursos(): Promise<number> {
-  const res = await fetch(`${API_URL}/api/Concurso?pageSize=1`);
+  const res = await fetch(`${API_URL}/Concurso?pageSize=1`);
   if (!res.ok) return 0;
   const data = await res.json();
   return data.totalCount ?? data.length ?? 0;
@@ -56,7 +60,7 @@ async function garantirDadosDisponiveis(): Promise<void> {
 
   console.log("📦 Banco vazio, disparando CreateConcurso...");
 
-  const res = await fetch(`${API_URL}/api/Concurso`, {
+  const res = await fetch(`${API_URL}/Concurso`, {
     method: "POST",
     headers: { "X-Api-Key": CONCURSO_API_KEY },
   });
