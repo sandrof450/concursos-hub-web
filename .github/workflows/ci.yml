@@ -47,7 +47,7 @@ jobs:
         run: docker compose -f docker-compose.ci.yml up --build -d
 
       - name: Wait for backend to be ready
-        run: npx wait-on http://localhost:5000/health --timeout 60000
+        run: npx wait-on http://localhost:5000/api/health --timeout 60000
 
       - name: Wait for frontend to be ready
         run: npx wait-on http://localhost:8080 --timeout 60000
@@ -64,7 +64,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         env:
-          VITE_API_URL: http://localhost:5000
+          VITE_API_URL: http://localhost:5000/api
           BASE_URL: http://localhost:8080
           CONCURSO_API_KEY: ${{ secrets.CONCURSO_API_KEY }}
         run: npx playwright test --workers=1

@@ -114,6 +114,7 @@ const EstadoAutocomplete = ({ value, onChange }: Props) => {
       <div className="relative">
         {/*div do trigger */}
         <div
+          data-testid="estado-trigger"
           onClick={() => setOpen(o => !o)}
           className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 min-h-[42px] flex flex-wrap gap-1.5 items-center cursor-pointer transition-all focus-within:border-emerald-500"
         >

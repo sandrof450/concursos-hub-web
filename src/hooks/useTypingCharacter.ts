@@ -1,13 +1,14 @@
 // src/hooks/useTypingCharacter.ts
 import { useEffect, useRef, useState } from "react";
 
-type Field = "titulo" | "orgao" | "area" | "fonte";
+type Field = "titulo" | "orgao" | "area" | "fonte" | "estados";
 
 const messages: Record<Field, (v: string) => string> = {
   titulo: v => `Buscando por "${v}"...`,
   orgao:  v => `Órgão ${v}, anotado!`,
   area:   v => `Área ${v}, ótima escolha!`,
   fonte: v => v ? `Fonte ${v} selecionada!` : "Todas as fontes.",
+  estados: v => v ? `Estados ${v} selecionados!` : "Todos os estados.",
 };
 
 const useTypingCharacter = () => {
