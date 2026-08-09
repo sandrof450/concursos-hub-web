@@ -131,6 +131,9 @@ test.describe("Resize da janela", () => {
       height: 667,
     });
 
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(200);
+
     const overflow = await page.evaluate(() => {
       return (
         document.documentElement.scrollWidth >
